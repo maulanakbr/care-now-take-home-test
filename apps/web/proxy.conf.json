@@ -1,0 +1,10 @@
+{
+  "/api/external": {
+    "target": "http://localhost:3100/api/v1",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/api/external": ""
+    }
+  }
+}

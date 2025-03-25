@@ -5,37 +5,22 @@
     "production": [
       "default",
       "!{projectRoot}/.eslintrc.json",
-      "!{projectRoot}/eslint.config.mjs",
-      "!{projectRoot}/**/?(*.)+(spec|test).[jt]s?(x)?(.snap)",
-      "!{projectRoot}/tsconfig.spec.json",
-      "!{projectRoot}/jest.config.[jt]s",
-      "!{projectRoot}/src/test-setup.[jt]s",
-      "!{projectRoot}/test-setup.[jt]s"
+      "!{projectRoot}/eslint.config.mjs"
     ],
     "sharedGlobals": []
   },
-  "nxCloudId": "67e18679aef78656e15d5f1b",
+  "workspaceLayout": {
+    "appsDir": "apps",
+    "libsDir": "libs"
+  },
   "plugins": [
     {
-      "plugin": "@nx/js/typescript",
+      "plugin": "@nx/next/plugin",
       "options": {
-        "typecheck": {
-          "targetName": "typecheck"
-        },
-        "build": {
-          "targetName": "build",
-          "configName": "tsconfig.lib.json",
-          "buildDepsName": "build-deps",
-          "watchDepsName": "watch-deps"
-        }
-      }
-    },
-    {
-      "plugin": "@nx/webpack/plugin",
-      "options": {
+        "startTargetName": "start",
         "buildTargetName": "build",
-        "serveTargetName": "serve",
-        "previewTargetName": "preview",
+        "devTargetName": "dev",
+        "serveStaticTargetName": "serve-static",
         "buildDepsTargetName": "build-deps",
         "watchDepsTargetName": "watch-deps"
       }
@@ -47,16 +32,33 @@
       }
     },
     {
-      "plugin": "@nx/jest/plugin",
+      "plugin": "@nx/webpack/plugin",
       "options": {
-        "targetName": "test"
-      },
-      "exclude": ["apps/api-e2e/**/*"]
+        "buildTargetName": "build",
+        "serveTargetName": "serve",
+        "previewTargetName": "preview",
+        "buildDepsTargetName": "build-deps",
+        "watchDepsTargetName": "watch-deps"
+      }
     }
   ],
+  "generators": {
+    "@nx/next": {
+      "application": {
+        "style": "tailwind",
+        "linter": "eslint"
+      }
+    }
+  },
+  "projects": {
+    "personal-portfolio": "apps/personal-portfolio",
+    "service": "apps/service"
+  },
   "targetDefaults": {
-    "test": {
-      "dependsOn": ["^build"]
+    "@nx/js:tsc": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
     }
   }
 }

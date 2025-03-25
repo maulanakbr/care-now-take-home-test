@@ -16,7 +16,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@carenow/api/*": ["apps/api/src/*"]
+      "@carenow/api/*": ["apps/api/src/*"],
+      "@carenow/web/*": ["apps/web/src/*"]
     },
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,

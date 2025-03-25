@@ -1,0 +1,42 @@
+generator client {
+    provider        = "prisma-client-js"
+    previewFeatures = []
+    binaryTargets   = ["debian-openssl-3.0.x", "linux-arm64-openssl-3.0.x", "native"]
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model Treatment {
+    id        String   @id @default(uuid())
+    name      String   @map("name")
+    date      DateTime @map("date")
+    cost      Float    @map("cost")
+    createdAt DateTime @default(now()) @map("created_at")
+    updatedAt DateTime @updatedAt @map("updated_at")
+
+    treatmentDescriptionsIds String[] @map("treatment_descriptions_ids")
+    medicationsPrescribedIds String[] @map("medications_prescribed_ids")
+
+    @@map("treatments")
+}
+
+model TreatmentDescription {
+    id          String   @id @default(uuid())
+    description String   @map("description")
+    createdAt   DateTime @default(now()) @map("created_at")
+    updatedAt   DateTime @updatedAt @map("updated_at")
+
+    @@map("treatment_descriptions")
+}
+
+model MedicationPrescribed {
+    id         String   @id @default(uuid())
+    prescribed String   @map("prescribed")
+    createdAt  DateTime @default(now()) @map("created_at")
+    updatedAt  DateTime @updatedAt @map("updated_at")
+
+    @@map("medications_prescribed")
+}

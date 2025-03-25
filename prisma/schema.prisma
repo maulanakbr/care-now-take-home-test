@@ -26,6 +26,7 @@ model Treatment {
 model TreatmentDescription {
     id          String   @id @default(uuid())
     description String   @map("description")
+    fee         Float    @map("fee")
     createdAt   DateTime @default(now()) @map("created_at")
     updatedAt   DateTime @updatedAt @map("updated_at")
 
@@ -35,6 +36,7 @@ model TreatmentDescription {
 model MedicationPrescribed {
     id         String   @id @default(uuid())
     prescribed String   @map("prescribed")
+    fee        Float    @map("fee")
     createdAt  DateTime @default(now()) @map("created_at")
     updatedAt  DateTime @updatedAt @map("updated_at")
 

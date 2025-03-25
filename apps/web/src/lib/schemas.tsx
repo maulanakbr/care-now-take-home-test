@@ -54,10 +54,12 @@ export const treatmentPayloadSchema = z.object({
 
 const treatmentDescriptionSchema = z.object({
   description: z.string(),
+  fee: z.number(),
 });
 
 const medicationPrescribedSchema = z.object({
   prescribed: z.string(),
+  fee: z.number(),
 });
 
 export type Treatment = BaseReduxResponse<

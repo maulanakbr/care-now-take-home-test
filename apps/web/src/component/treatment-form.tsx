@@ -47,6 +47,13 @@ export default function TreatmentForm() {
   const { data: medicationPrescribedData } = useGetMedicationPrescribedQuery();
   const medicationPrescribedOptions = medicationPrescribedData?.data || [];
 
+  const treatmentDescriptionsIdsWatch: string[] = form.watch(
+    'treatmentDescriptionsIds'
+  );
+  const medicationsPrescribedIdsWatch: string[] = form.watch(
+    'medicationsPrescribedIds'
+  );
+
   const [postTreatment, { isLoading }] = usePostTreatmentMutation();
 
   function handleIsSuccess() {
@@ -68,6 +75,34 @@ export default function TreatmentForm() {
       handleIsFail();
     }
   }
+
+  const totalTreatmentCost = React.useMemo(() => {
+    if (
+      !treatmentDescriptionOptions.length ||
+      !medicationPrescribedOptions.length
+    ) {
+      return 0;
+    }
+
+    const totalTreatmentDescriptionFees = treatmentDescriptionOptions
+      .filter((item) => treatmentDescriptionsIdsWatch.includes(item.id))
+      .reduce((acc, curr) => acc + (curr.fee || 0), 0);
+
+    const totalMedicationPrescribedFees = medicationPrescribedOptions
+      .filter((item) => medicationsPrescribedIdsWatch.includes(item.id))
+      .reduce((acc, curr) => acc + (curr.fee || 0), 0);
+
+    return totalTreatmentDescriptionFees + totalMedicationPrescribedFees;
+  }, [
+    treatmentDescriptionsIdsWatch,
+    medicationsPrescribedIdsWatch,
+    treatmentDescriptionOptions,
+    medicationPrescribedOptions,
+  ]);
+
+  React.useEffect(() => {
+    form.setValue('cost', totalTreatmentCost);
+  }, [totalTreatmentCost]);
 
   if (isSuccess) {
     return <SuccessState handleBack={handleIsSuccess} />;
@@ -212,7 +247,6 @@ export default function TreatmentForm() {
                 <FormLabel>Cost</FormLabel>
                 <FormControl>
                   <Input
-                    type="number"
                     placeholder="Enter cost"
                     {...field}
                     onChange={(e) => field.onChange(Number(e.target.value))}

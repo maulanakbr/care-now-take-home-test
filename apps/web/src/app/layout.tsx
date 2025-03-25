@@ -1,3 +1,4 @@
+import { PersistGate } from 'redux-persist/integration/react';
 import './global.css';
 
 export const metadata = {

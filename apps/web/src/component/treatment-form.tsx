@@ -23,20 +23,10 @@ import {
   SelectItem,
   SelectValue,
 } from '@/component/ui/select';
+import { useGetTreatmentDescriptionsQuery } from '@/services/treatment-desciption';
+import { useGetMedicationPrescribedQuery } from '@/services/medication-prescribed';
 
 export default function TreatmentForm() {
-  const treatmentOptions = [
-    { label: 'Treatment 1', value: 'treatment1' },
-    { label: 'Treatment 2', value: 'treatment2' },
-    { label: 'Treatment 3', value: 'treatment3' },
-  ];
-
-  const medicationOptions = [
-    { label: 'Medication 1', value: 'med1' },
-    { label: 'Medication 2', value: 'med2' },
-    { label: 'Medication 3', value: 'med3' },
-  ];
-
   const form = useForm<TreatmentPayload>({
     resolver: zodResolver(treatmentPayloadSchema),
     defaultValues: {
@@ -54,6 +44,13 @@ export default function TreatmentForm() {
       date: moment(values.date).format('YYYY-MM-DD'),
     });
   }
+
+  const { data: treatmentDescriptionsData } =
+    useGetTreatmentDescriptionsQuery();
+  const treatmentDescriptionOptions = treatmentDescriptionsData.data;
+
+  const { data: medicationPrescribedData } = useGetMedicationPrescribedQuery();
+  const medicationPrescribedOptions = medicationPrescribedData.data;
 
   return (
     <Form {...form}>
@@ -81,7 +78,7 @@ export default function TreatmentForm() {
                 onValueChange={(value) =>
                   field.onChange(
                     field.value.includes(value)
-                      ? field.value.filter((v) => v !== value)
+                      ? field.value.filter((v: string) => v !== value)
                       : [...field.value, value]
                   )
                 }
@@ -95,23 +92,24 @@ export default function TreatmentForm() {
                       ? field.value
                           .map(
                             (val: string) =>
-                              treatmentOptions.find((opt) => opt.value === val)
-                                ?.label
+                              treatmentDescriptionOptions.find(
+                                (opt) => opt.id === val
+                              )?.description
                           )
                           .join(', ')
                       : 'Select treatment'}
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  {treatmentOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
+                  {treatmentDescriptionOptions.map((option) => (
+                    <SelectItem key={option.id} value={option.id}>
                       <input
                         type="checkbox"
-                        checked={field.value.includes(option.value)}
+                        checked={field.value.includes(option.id)}
                         readOnly
                         className="mr-2"
                       />
-                      {option.label}
+                      {option.description}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -130,7 +128,7 @@ export default function TreatmentForm() {
                 onValueChange={(value) =>
                   field.onChange(
                     field.value.includes(value)
-                      ? field.value.filter((v) => v !== value)
+                      ? field.value.filter((v: string) => v !== value)
                       : [...field.value, value]
                   )
                 }
@@ -144,23 +142,24 @@ export default function TreatmentForm() {
                       ? field.value
                           .map(
                             (val: string) =>
-                              medicationOptions.find((opt) => opt.value === val)
-                                ?.label
+                              medicationPrescribedOptions.find(
+                                (opt) => opt.id === val
+                              )?.prescribed
                           )
                           .join(', ')
                       : 'Select medication prescribed'}
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  {medicationOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
+                  {medicationPrescribedOptions.map((option) => (
+                    <SelectItem key={option.id} value={option.id}>
                       <input
                         type="checkbox"
-                        checked={field.value.includes(option.value)}
+                        checked={field.value.includes(option.id)}
                         readOnly
                         className="mr-2"
                       />
-                      {option.label}
+                      {option.prescribed}
                     </SelectItem>
                   ))}
                 </SelectContent>

@@ -8,12 +8,7 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
 
   app.enableCors({
-    origin: [
-      configService.get('FRONTEND_URL'),
-      configService.get('APP_URL'),
-      'http://localhost:3111',
-      'http://localhost:3100',
-    ],
+    origin: [configService.get('FRONTEND_URL'), 'http://localhost:4200'],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     credentials: true,
     allowedHeaders: [

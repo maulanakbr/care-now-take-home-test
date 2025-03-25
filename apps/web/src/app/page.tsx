@@ -1,12 +1,12 @@
+'use client';
+
+import MainLayout from '@/component/layout/main-layout';
+import TreatmentForm from '@/component/treatment-form';
+
 export default function Index() {
-  /*
-   * Replace the elements below with your own.
-   *
-   * Note: The corresponding styles are in the ./index.tailwind file.
-   */
   return (
-    <div>
-      <h1>Care Now</h1>
-    </div>
+    <MainLayout>
+      <TreatmentForm />
+    </MainLayout>
   );
 }

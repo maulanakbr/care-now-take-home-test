@@ -23,9 +23,11 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from './ui/checkbox';
 import * as React from 'react';
 import SuccessState from './misc/success-state';
+import FailState from './misc/fail-state';
 
 export default function TreatmentForm() {
   const [isSuccess, setIsSuccess] = React.useState<boolean>(false);
+  const [isFail, setIsFail] = React.useState<boolean>(false);
 
   const form = useForm<TreatmentPayload>({
     resolver: zodResolver(treatmentPayloadSchema),
@@ -51,17 +53,28 @@ export default function TreatmentForm() {
     setIsSuccess(!isSuccess);
   }
 
+  function handleIsFail() {
+    setIsFail(!isFail);
+  }
+
   async function onSubmit(values: TreatmentPayload) {
     const result = await postTreatment(values).unwrap();
 
     if (!isLoading && result.status === 201) {
       form.reset();
       handleIsSuccess();
+    } else {
+      form.reset();
+      handleIsFail();
     }
   }
 
   if (isSuccess) {
     return <SuccessState handleBack={handleIsSuccess} />;
+  }
+
+  if (isFail) {
+    return <FailState handleBack={handleIsFail} />;
   }
 
   return (
@@ -81,7 +94,7 @@ export default function TreatmentForm() {
                 <FormControl>
                   <Input placeholder="Enter name" {...field} />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-red-600" />
               </FormItem>
             )}
           />
@@ -134,7 +147,7 @@ export default function TreatmentForm() {
                     ))}
                   </SelectContent>
                 </Select>
-                <FormMessage />
+                <FormMessage className="text-red-600" />
               </FormItem>
             )}
           />
@@ -187,7 +200,7 @@ export default function TreatmentForm() {
                     ))}
                   </SelectContent>
                 </Select>
-                <FormMessage />
+                <FormMessage className="text-red-600" />
               </FormItem>
             )}
           />
@@ -205,7 +218,7 @@ export default function TreatmentForm() {
                     onChange={(e) => field.onChange(Number(e.target.value))}
                   />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-red-600" />
               </FormItem>
             )}
           />
@@ -223,7 +236,7 @@ export default function TreatmentForm() {
                     className="w-full rounded-md border border-neutral-200 text-gray-700 border-input px-3 py-2 text-base shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring cursor-pointer"
                   />
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-red-600" />
               </FormItem>
             )}
           />

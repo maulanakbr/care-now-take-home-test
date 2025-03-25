@@ -9,7 +9,7 @@ interface MainLayoutProps {
 export default function MainLayout({ children }: MainLayoutProps) {
   return (
     <div className="flex flex-col min-h-screen">
-      <header className="bg-white shadow-md p-4">
+      <header className="bg-white shadow-md p-4 cursor-pointer">
         <h1 className="text-xl font-semibold">Care Now Take Home Test</h1>
       </header>
       <main className="flex-1 py-32 px-60">

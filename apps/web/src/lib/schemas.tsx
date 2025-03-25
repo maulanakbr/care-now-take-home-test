@@ -12,6 +12,14 @@ type BaseReduxResponse<T> = {
   data: T;
 };
 
+export const treatmentSchema = z.object({
+  name: z.string(),
+  treatmentDescriptionsIds: z.array(z.string()),
+  medicationsPrescribedIds: z.array(z.string()),
+  date: z.date(),
+  cost: z.number(),
+});
+
 export const treatmentPayloadSchema = z.object({
   name: z
     .string({
@@ -43,6 +51,10 @@ const treatmentDescriptionSchema = z.object({
 const medicationPrescribedSchema = z.object({
   prescribed: z.string(),
 });
+
+export type Treatment = BaseReduxResponse<
+  (BaseResponse & z.infer<typeof treatmentSchema>)[]
+>;
 
 export type TreatmentDescription = BaseReduxResponse<
   (BaseResponse & z.infer<typeof treatmentDescriptionSchema>)[]

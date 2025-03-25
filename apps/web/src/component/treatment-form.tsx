@@ -1,6 +1,5 @@
 'use client';
 
-import { Button } from '@/component/ui/button';
 import { TreatmentPayload, treatmentPayloadSchema } from '@/lib/schemas';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -16,15 +15,12 @@ import {
   FormMessage,
 } from '@/component/ui/form';
 import { Input } from '@/component/ui/input';
-import {
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectItem,
-  SelectValue,
-} from '@/component/ui/select';
+import { Select, SelectTrigger, SelectContent } from '@/component/ui/select';
 import { useGetTreatmentDescriptionsQuery } from '@/services/treatment-desciption';
 import { useGetMedicationPrescribedQuery } from '@/services/medication-prescribed';
+import { usePostTreatmentMutation } from '@/services/treatment';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from './ui/checkbox';
 
 export default function TreatmentForm() {
   const form = useForm<TreatmentPayload>({
@@ -38,19 +34,22 @@ export default function TreatmentForm() {
     },
   });
 
-  function onSubmit(values: TreatmentPayload) {
-    console.log({
-      ...values,
-      date: moment(values.date).format('YYYY-MM-DD'),
-    });
-  }
-
   const { data: treatmentDescriptionsData } =
     useGetTreatmentDescriptionsQuery();
-  const treatmentDescriptionOptions = treatmentDescriptionsData.data;
+  const treatmentDescriptionOptions = treatmentDescriptionsData?.data || [];
 
   const { data: medicationPrescribedData } = useGetMedicationPrescribedQuery();
-  const medicationPrescribedOptions = medicationPrescribedData.data;
+  const medicationPrescribedOptions = medicationPrescribedData?.data || [];
+
+  const [postTreatment, { isLoading }] = usePostTreatmentMutation();
+
+  async function onSubmit(values: TreatmentPayload) {
+    const result = await postTreatment(values).unwrap();
+
+    if (!isLoading && result.status === 201) {
+      form.reset();
+    }
+  }
 
   return (
     <Form {...form}>
@@ -74,20 +73,9 @@ export default function TreatmentForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Treatment Description</FormLabel>
-              <Select
-                onValueChange={(value) =>
-                  field.onChange(
-                    field.value.includes(value)
-                      ? field.value.filter((v: string) => v !== value)
-                      : [...field.value, value]
-                  )
-                }
-              >
+              <Select>
                 <SelectTrigger>
-                  {field.value.length === 0 && (
-                    <SelectValue placeholder="Select treatment" />
-                  )}
-                  <SelectValue>
+                  <div className="truncate">
                     {field.value.length > 0
                       ? field.value
                           .map(
@@ -98,19 +86,33 @@ export default function TreatmentForm() {
                           )
                           .join(', ')
                       : 'Select treatment'}
-                  </SelectValue>
+                  </div>
                 </SelectTrigger>
                 <SelectContent>
                   {treatmentDescriptionOptions.map((option) => (
-                    <SelectItem key={option.id} value={option.id}>
-                      <input
-                        type="checkbox"
+                    <div
+                      key={option.id}
+                      className="flex items-center space-x-2 px-2 py-1 cursor-pointer hover:bg-gray-100"
+                      onClick={() => {
+                        field.onChange(
+                          field.value.includes(option.id)
+                            ? field.value.filter((id) => id !== option.id)
+                            : [...field.value, option.id]
+                        );
+                      }}
+                    >
+                      <Checkbox
                         checked={field.value.includes(option.id)}
-                        readOnly
-                        className="mr-2"
+                        onCheckedChange={(checked) => {
+                          field.onChange(
+                            checked
+                              ? [...field.value, option.id]
+                              : field.value.filter((id) => id !== option.id)
+                          );
+                        }}
                       />
-                      {option.description}
-                    </SelectItem>
+                      <span>{option.description}</span>
+                    </div>
                   ))}
                 </SelectContent>
               </Select>
@@ -124,20 +126,9 @@ export default function TreatmentForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Medications Prescribed</FormLabel>
-              <Select
-                onValueChange={(value) =>
-                  field.onChange(
-                    field.value.includes(value)
-                      ? field.value.filter((v: string) => v !== value)
-                      : [...field.value, value]
-                  )
-                }
-              >
+              <Select>
                 <SelectTrigger>
-                  {field.value.length === 0 && (
-                    <SelectValue placeholder="Select medication prescribed" />
-                  )}
-                  <SelectValue>
+                  <div className="truncate">
                     {field.value.length > 0
                       ? field.value
                           .map(
@@ -148,19 +139,33 @@ export default function TreatmentForm() {
                           )
                           .join(', ')
                       : 'Select medication prescribed'}
-                  </SelectValue>
+                  </div>
                 </SelectTrigger>
                 <SelectContent>
                   {medicationPrescribedOptions.map((option) => (
-                    <SelectItem key={option.id} value={option.id}>
-                      <input
-                        type="checkbox"
+                    <div
+                      key={option.id}
+                      className="flex items-center space-x-2 px-2 py-1 cursor-pointer hover:bg-gray-100"
+                      onClick={() => {
+                        field.onChange(
+                          field.value.includes(option.id)
+                            ? field.value.filter((id) => id !== option.id)
+                            : [...field.value, option.id]
+                        );
+                      }}
+                    >
+                      <Checkbox
                         checked={field.value.includes(option.id)}
-                        readOnly
-                        className="mr-2"
+                        onCheckedChange={(checked) => {
+                          field.onChange(
+                            checked
+                              ? [...field.value, option.id]
+                              : field.value.filter((id) => id !== option.id)
+                          );
+                        }}
                       />
-                      {option.prescribed}
-                    </SelectItem>
+                      <span>{option.prescribed}</span>
+                    </div>
                   ))}
                 </SelectContent>
               </Select>
@@ -204,7 +209,9 @@ export default function TreatmentForm() {
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        <Button type="submit" isLoading={isLoading}>
+          Submit
+        </Button>
       </form>
     </Form>
   );

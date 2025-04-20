@@ -20,8 +20,8 @@ export default function MainLayout({ children }: MainLayoutProps) {
         </Provider>
       </main>
       <footer className="bg-gray-100 p-4 text-center text-sm">
-        <p>Made by Maulana Akbar Yudistika</p>
-        <p>© {new Date().getFullYear()} Care Now. All rights reserved.</p>
+        <p className="text-neutral-400">Made by Maulana Akbar Yudistika</p>
+        <p className="font-semibold">© {new Date().getFullYear()} Care Now. All rights reserved.</p>
       </footer>
     </div>
   );

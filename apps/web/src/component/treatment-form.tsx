@@ -26,7 +26,7 @@ export default function TreatmentForm() {
     resolver: zodResolver(treatmentPayloadSchema),
     defaultValues: {
       name: '',
-      cost: '',
+      cost: 0,
       date: moment().toDate(),
       treatmentDescriptionsIds: [],
       medicationsPrescribedIds: [],

@@ -1,4 +1,6 @@
+import MainLayout from '@/component/layout/main-layout';
 import './global.css';
+import { Providers } from '@/component/layout/providers';
 
 export const metadata = {
   title: 'Care Now Take Home Test',
@@ -8,7 +10,11 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <Providers>
+          <MainLayout>{children}</MainLayout>
+        </Providers>
+      </body>
     </html>
   );
 }
